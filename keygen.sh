@@ -3,7 +3,7 @@
 set_signing_key()
 {
   keyid=$1
-  echo "Configuring git to use the gpg key with id $keyid..."
+  echo "Configuring git to use the gpg key with id $keyid"
   git config --global user.signingkey $keyid
   echo "Done!"
 }
@@ -35,7 +35,7 @@ existing_keys()
     echo
 
     line=${keys_info[$i]}
-    keys_id+=$(eval "echo $line | cut -d ' ' -f1 | cut -d '/' -f2")
+    keys_id[$i]=$(eval "echo $line | cut -d ' ' -f1 | cut -d '/' -f2")
 
     let i=i+1
   done
