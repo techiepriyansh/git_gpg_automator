@@ -41,9 +41,7 @@ existing_keys()
     echo
     echo "Creating a new key..."
     if new_key ; then
-      echo 
       echo "New key created successfully"
-      echo
       existing_keys
     fi
   elif ! [[ "$inpt" =~ ^[0-9]+$ ]] ; then
@@ -76,9 +74,7 @@ else
 	echo "No gpg keys found!"
   echo "Creating a new one..."
   if new_key ; then
-    echo 
     echo "New key created successfully"
-    echo
     existing_keys
   fi
 fi
