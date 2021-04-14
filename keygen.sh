@@ -9,7 +9,7 @@ set_signing_key()
 
 new_key()
 {
-  echo Hello world!
+  gpg --default-new-key-algo rsa4096 --gen-key
 }
 
 existing_keys()
@@ -35,11 +35,15 @@ existing_keys()
   done
 
   echo "Which key would you like to use?"
-  read -p "Type its number or press F to create a new one: " inpt
+  read -p "Type its index(1/2/...) or press F to create a new one: " inpt
   
   if [ "$inpt" = "F" ] || [ "$inpt" = "f" ] ; then
+    echo
     echo "Creating a new key..."
     if new_key ; then
+      echo 
+      echo "New key created successfully"
+      echo
       existing_keys
     fi
   elif ! [[ "$inpt" =~ ^[0-9]+$ ]] ; then
@@ -72,6 +76,9 @@ else
 	echo "No gpg keys found!"
   echo "Creating a new one..."
   if new_key ; then
+    echo 
+    echo "New key created successfully"
+    echo
     existing_keys
   fi
 fi
