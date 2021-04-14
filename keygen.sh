@@ -2,12 +2,30 @@
 
 existing_keys()
 {
-  gpg --list-secret-keys --keyid-format LONG | grep ^sec | while read -r line ; do
-    KEY_TYPE_ID=$(eval "echo $line | awk '{print \$2}'")
-    KEY_TYPE=$(eval "echo $KEY_TYPE_ID | cut -d '/' -f1")
-    KEY_ID=$(eval "echo $KEY_TYPE_ID | cut -d '/' -f2")
-    echo $KEY_TYPE $KEY_ID
-  done 
+  keys_id=()
+  keys_info=()
+  keys_cred_info=()
+  mapfile -t keys_info < <( gpg --list-secret-keys --keyid-format LONG | grep ^sec | cut -c 4- | awk '{$1=$1};1' )
+  mapfile -t keys_cred_info < <( gpg --list-secret-keys --keyid-format LONG | grep ^uid | cut -c 4- | awk '{$1=$1};1' )
+
+  for line in "${keys_info[@]}" ; do
+    keys_id+=$(eval "echo $line | cut -d ' ' -f1 |cut -d '/' -f2")
+  done
+
+  echo "${keys_id[@]}"
+  echo "${keys_info[@]}"
+  echo "${keys_cred_info[@]}"
+  # keys=($(gpg --list-secret-keys --keyid-format LONG | grep ^sec))
+  # keys_id=()
+  # keys_type=()
+  # for i in "${!keys[@]}" ; do
+  #   flag=$(eval "expr $i % 6")
+  #   if [ "$flag" = "1" ] ; then
+  #     KEY_TYPE_ID=${keys[$i]}
+  #     keys_type+=$(eval "echo $KEY_TYPE_ID | cut -d '/' -f1")
+  #     keys_id+=$(eval "echo $KEY_TYPE_ID | cut -d '/' -f2")
+  #   fi
+  # done
 }
 
 
