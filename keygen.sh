@@ -1,5 +1,17 @@
 #!/usr/bin/bash
 
+set_signing_key()
+{
+  keyid=$1
+  echo "Configuring git to use the gpg key with id $keyid"
+  git config --global user.signingkey $keyid
+}
+
+new_key()
+{
+  echo Hello world!
+}
+
 existing_keys()
 {
   keys_id=()
@@ -8,34 +20,58 @@ existing_keys()
   mapfile -t keys_info < <( gpg --list-secret-keys --keyid-format LONG | grep ^sec | cut -c 4- | awk '{$1=$1};1' )
   mapfile -t keys_cred_info < <( gpg --list-secret-keys --keyid-format LONG | grep ^uid | cut -c 4- | awk '{$1=$1};1' )
 
-  for line in "${keys_info[@]}" ; do
+  i=0
+  while [ "$i" -lt "${#keys_info[@]}" ] ; do
+    num=`expr $i + 1`
+    echo "Key [$num]: "
+    echo "  " "${keys_cred_info[$i]}"
+    echo "  " "${keys_info[$i]}"
+    echo
+
+    line=${keys_info[$i]}
     keys_id+=$(eval "echo $line | cut -d ' ' -f1 |cut -d '/' -f2")
+
+    let i=i+1
   done
 
-  echo "${keys_id[@]}"
-  echo "${keys_info[@]}"
-  echo "${keys_cred_info[@]}"
-  # keys=($(gpg --list-secret-keys --keyid-format LONG | grep ^sec))
-  # keys_id=()
-  # keys_type=()
-  # for i in "${!keys[@]}" ; do
-  #   flag=$(eval "expr $i % 6")
-  #   if [ "$flag" = "1" ] ; then
-  #     KEY_TYPE_ID=${keys[$i]}
-  #     keys_type+=$(eval "echo $KEY_TYPE_ID | cut -d '/' -f1")
-  #     keys_id+=$(eval "echo $KEY_TYPE_ID | cut -d '/' -f2")
-  #   fi
-  # done
+  echo "Which key would you like to use?"
+  read -p "Type its number or press F to create a new one: " inpt
+  
+  if [ "$inpt" = "F" ] || [ "$inpt" = "f" ] ; then
+    echo "Creating a new key..."
+    if new_key ; then
+      existing_keys
+    fi
+  elif ! [[ "$inpt" =~ ^[0-9]+$ ]] ; then
+    echo
+    echo "Invalid input!"
+    echo "Retry"
+    echo
+    existing_keys
+  elif [ "$inpt" -gt "${#keys_info[@]}" ] || [ "$inpt" = "0" ] ; then
+    echo
+    echo "Invalid input!"
+    echo "Retry"
+    echo
+    existing_keys
+  else
+    idx=`expr $inpt - 1`
+    set_signing_key ${keys_id[$idx]}
+  fi
 }
 
 
+echo 
+echo "Searching for existing gpg keys..."
+
 if gpg --list-secret-keys --keyid-format LONG | grep -q ^sec ; then
-	echo "existing gpg keys found"
+	echo "Existing gpg keys found!"
+  echo
   existing_keys
 else
-	echo "no gpg keys found"
-  echo "creating a new one"
-  # create key
-  existing_keys
+	echo "No gpg keys found!"
+  echo "Creating a new one..."
+  if new_key ; then
+    existing_keys
+  fi
 fi
-
