@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 set_signing_key()
 {
