@@ -40,23 +40,16 @@ existing_keys()
   read -p "Type its index(1/2/...) or press F to create a new one: " inpt
   
   if [ "$inpt" = "F" ] || [ "$inpt" = "f" ] ; then
-    echo
-    echo "Creating a new key..."
+    printf "\nCreating a new key...\n"
     if new_key ; then
       echo "New key created successfully"
       existing_keys
     fi
   elif ! [[ "$inpt" =~ ^[0-9]+$ ]] ; then
-    echo
-    echo "Invalid input!"
-    echo "Retry"
-    echo
+    printf "\nInvalid Input\nRetry\n\n"
     existing_keys
   elif [ "$inpt" -gt "${#keys_info[@]}" ] || [ "$inpt" = "0" ] ; then
-    echo
-    echo "Invalid input!"
-    echo "Retry"
-    echo
+    printf "\nInvalid Input\nRetry\n\n"
     existing_keys
   else
     idx=`expr $inpt - 1`
@@ -68,8 +61,7 @@ existing_keys()
 echo "Searching for existing gpg keys..."
 
 if gpg --list-secret-keys --keyid-format LONG | grep -q ^sec ; then
-  echo "Existing gpg keys found!"
-  echo
+  printf "Existing gpg keys found!\n\n"
   existing_keys
 else
   echo "No gpg keys found!"
