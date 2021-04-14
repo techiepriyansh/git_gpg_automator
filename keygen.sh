@@ -31,7 +31,7 @@ existing_keys()
     echo
 
     line=${keys_info[$i]}
-    keys_id+=$(eval "echo $line | cut -d ' ' -f1 |cut -d '/' -f2")
+    keys_id+=$(eval "echo $line | cut -d ' ' -f1 | cut -d '/' -f2")
 
     let i=i+1
   done
