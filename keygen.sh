@@ -3,13 +3,17 @@
 set_signing_key()
 {
   keyid=$1
-  echo "Configuring git to use the gpg key with id $keyid"
+  echo "Configuring git to use the gpg key with id $keyid..."
   git config --global user.signingkey $keyid
+  echo "Done!"
 }
 
 new_key()
 {
-  gpg --default-new-key-algo rsa4096 --gen-key
+  printf "\nCreating a new key...\n"
+  if gpg --default-new-key-algo rsa4096 --gen-key ; then
+    echo "New key created successfully!"
+  fi
 }
 
 existing_keys()
@@ -40,16 +44,14 @@ existing_keys()
   read -p "Type its index(1/2/...) or press F to create a new one: " inpt
   
   if [ "$inpt" = "F" ] || [ "$inpt" = "f" ] ; then
-    printf "\nCreating a new key...\n"
     if new_key ; then
-      echo "New key created successfully"
       existing_keys
     fi
   elif ! [[ "$inpt" =~ ^[0-9]+$ ]] ; then
-    printf "\nInvalid Input\nRetry\n\n"
+    printf "\nInvalid input!\nRetry\n\n"
     existing_keys
   elif [ "$inpt" -gt "${#keys_info[@]}" ] || [ "$inpt" = "0" ] ; then
-    printf "\nInvalid Input\nRetry\n\n"
+    printf "\nInvalid input!\nRetry\n\n"
     existing_keys
   else
     idx=`expr $inpt - 1`
@@ -65,9 +67,7 @@ if gpg --list-secret-keys --keyid-format LONG | grep -q ^sec ; then
   existing_keys
 else
   echo "No gpg keys found!"
-  echo "Creating a new one..."
   if new_key ; then
-    echo "New key created successfully"
     existing_keys
   fi
 fi
