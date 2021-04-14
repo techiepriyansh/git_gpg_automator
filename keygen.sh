@@ -68,11 +68,11 @@ existing_keys()
 echo "Searching for existing gpg keys..."
 
 if gpg --list-secret-keys --keyid-format LONG | grep -q ^sec ; then
-	echo "Existing gpg keys found!"
+  echo "Existing gpg keys found!"
   echo
   existing_keys
 else
-	echo "No gpg keys found!"
+  echo "No gpg keys found!"
   echo "Creating a new one..."
   if new_key ; then
     echo "New key created successfully"
