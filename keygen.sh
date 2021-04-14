@@ -17,12 +17,14 @@ existing_keys()
   keys_id=()
   keys_info=()
   keys_cred_info=()
+
   mapfile -t keys_info < <( gpg --list-secret-keys --keyid-format LONG | grep ^sec | cut -c 4- | awk '{$1=$1};1' )
   mapfile -t keys_cred_info < <( gpg --list-secret-keys --keyid-format LONG | grep ^uid | cut -c 4- | awk '{$1=$1};1' )
 
   i=0
   while [ "$i" -lt "${#keys_info[@]}" ] ; do
     num=`expr $i + 1`
+
     echo "Key [$num]: "
     echo "  " "${keys_cred_info[$i]}"
     echo "  " "${keys_info[$i]}"
@@ -63,7 +65,6 @@ existing_keys()
 }
 
 
-echo 
 echo "Searching for existing gpg keys..."
 
 if gpg --list-secret-keys --keyid-format LONG | grep -q ^sec ; then
