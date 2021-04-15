@@ -14,10 +14,10 @@ new_key()
   printf "\nCreating a new key...\n"
   if gpg --default-new-key-algo rsa4096 --gen-key ; then
     new_key_id=`gpg --list-secret-keys --keyid-format LONG | grep ^sec | cut -c 4- | awk '{$1=$1};1' | tail -n 1 | cut -d ' ' -f1 | cut -d '/' -f2`
-    printf "New key with id %s created successfully!\n" $new_key_id
-    printf 'Paste this in your Github -> Settings -> SSH and GPG keys -> New GPG key\n\n\n\n'
+    printf "New key with id %s created successfully!\n\n\n\n" $new_key_id
     gpg --armor --export $new_key_id
-    printf '\n\n\n\n'
+    printf '\n\n\n\nPaste the above GPG key in your Github -> Settings -> SSH and GPG keys -> New GPG key\n\n\n\n'
+    read -p "Press enter to continue"
   fi
 }
 
