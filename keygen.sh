@@ -5,6 +5,7 @@ set_signing_key()
   keyid=$1
   echo "Configuring git to use the gpg key with id $keyid"
   git config --global user.signingkey $keyid
+  git config --global commit.gpgsign true
   echo "Done!"
 }
 
@@ -12,7 +13,11 @@ new_key()
 {
   printf "\nCreating a new key...\n"
   if gpg --default-new-key-algo rsa4096 --gen-key ; then
-    echo "New key created successfully!"
+    new_key_id=`gpg --list-secret-keys --keyid-format LONG | grep ^sec | cut -c 4- | awk '{$1=$1};1' | tail -n 1 | cut -d ' ' -f1 | cut -d '/' -f2`
+    printf "New key with id %s created successfully!\n" $new_key_id
+    printf 'Paste this in your Github -> Settings -> SSH and GPG keys -> New GPG key\n\n\n\n'
+    gpg --armor --export $new_key_id
+    printf '\n\n\n\n'
   fi
 }
 
