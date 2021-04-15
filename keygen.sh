@@ -16,7 +16,7 @@ new_key()
     new_key_id=`gpg --list-secret-keys --keyid-format LONG | grep ^sec | cut -c 4- | awk '{$1=$1};1' | tail -n 1 | cut -d ' ' -f1 | cut -d '/' -f2`
     printf "New key with id %s created successfully!\n\n\n\n" $new_key_id
     gpg --armor --export $new_key_id
-    printf '\n\n\n\nPaste the above GPG key in your Github -> Settings -> SSH and GPG keys -> New GPG key\n\n\n\n'
+    printf '\n\n\nPaste the above GPG key in your Github -> Settings -> SSH and GPG keys -> New GPG key\n'
     read -p "Press enter to continue"
   fi
 }
